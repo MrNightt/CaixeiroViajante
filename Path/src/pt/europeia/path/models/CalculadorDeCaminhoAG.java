@@ -9,11 +9,11 @@ import javafx.geometry.Point2D;
 public class CalculadorDeCaminhoAG {
 	
 	//O genotipo e um array de ints
-	private ArrayList<ArrayList<Integer>> genotipos = new ArrayList<ArrayList<Integer>>();
+	private int[][] genotipos;
 
-	private ArrayList<Integer> melhorGenotipo = new ArrayList<Integer>();
+	private int[] melhorGenotipo;
 	
-	private ArrayList<Double> aptidao = new ArrayList<Double>();
+	private double[] aptidoes;
 	
 	private int geracao = 1;
 	
@@ -32,8 +32,12 @@ public class CalculadorDeCaminhoAG {
 		this.populacao = populacao;
 		this.taxaMutacao = taxaMutacao;
 		
+		genotipos = new int[populacao][cidades.size()];
+		aptidoes = new double[populacao];
+		melhorGenotipo = new int[cidades.size()];
+		
 		for(int i = 0; i < cidades.size(); i++) {
-			melhorGenotipo.add(i);
+			melhorGenotipo[i] = i;
 		}
 		
 		melhorDistancia = distancia(melhorGenotipo);
@@ -57,12 +61,12 @@ public class CalculadorDeCaminhoAG {
 	 * @param genotipo A ordem a percorrer
 	 * @return
 	 */
-	public double distancia(ArrayList<Integer> genotipo) {
+	public double distancia(int[] genotipo) {
 
 		double somatorio = 0;
 
 		for(int i = 0; i < cidades.size() - 1; i++) {
-			somatorio += cidades.get(genotipo.get(i)).distance(cidades.get(genotipo.get(i+1)));
+			somatorio += cidades.get(genotipo[i]).distance(cidades.get(genotipo[i+1]));
 		}
 
 		return somatorio;
@@ -70,11 +74,11 @@ public class CalculadorDeCaminhoAG {
 	}
 	
 	
-	public void mutar(ArrayList<Integer> genotipo) {
+	public void mutar(int[] genotipo) {
 		double random = StdRandom.uniform();
 		if(random <= taxaMutacao) {
-			int i = (int) StdRandom.uniform(0,genotipo.size());
-			int j = (int) StdRandom.uniform(0,genotipo.size());
+			int i = (int) StdRandom.uniform(0,genotipo.length);
+			int j = (int) StdRandom.uniform(0,genotipo.length);
 			swap(genotipo, i, j);
 		}
 	}
@@ -85,7 +89,7 @@ public class CalculadorDeCaminhoAG {
 		//Selecionar os 50% melhores da populacao
 //		InsertionModified.sort(aptidao, genotipos);
 		
-		for(ArrayList<Integer> each : genotipos) {
+		for(int[] each : genotipos) {
 			mutar(each);
 		}
 		geracao++;
@@ -99,31 +103,31 @@ public class CalculadorDeCaminhoAG {
 
 	private void gerarPopulacao() {
 		
-		genotipos.add(melhorGenotipo);
-		for(int i = 0; i < populacao - 1; i++) {
-			ArrayList<Integer> temp = new ArrayList(melhorGenotipo);
+		genotipos[0] = melhorGenotipo;
+		for(int i = 1; i < populacao; i++) {
+			int[] temp = melhorGenotipo.clone();
 			shuffle(temp);
-			aptidao.add(1 / distancia(temp) + 1);
-			genotipos.add(temp);
+			aptidoes[i] = (1 / distancia(temp) + 1);
+			genotipos[i] = temp;
 		}
 		
 	}
 
 
 	//Knuth Shuffling Algorithm - Entry Point
-	public static void shuffle(final ArrayList values) {
-		for (int i = 0; i != values.size(); i++) {
+	public static void shuffle(final int[] values) {
+		for (int i = 0; i != values.length; i++) {
 			final int r = StdRandom.uniform(i + 1);
 			swap(values, i, r);
 		}
 	}
 	
 
-	private static void swap(final ArrayList values, final int firstPosition,
+	private static void swap(final int[] values, final int firstPosition,
 			final int secondPosition) {
-		final Object temporary = values.get(firstPosition);
-		values.set(firstPosition, values.get(secondPosition));
-		values.set(secondPosition, temporary);
+		final int temporary = values[firstPosition];
+		values[firstPosition] = values[secondPosition];
+		values[secondPosition] = temporary;
 	}
 	//Knuth Shuffling Algorithm - End Point
 
@@ -166,27 +170,17 @@ public class CalculadorDeCaminhoAG {
 	}
 
 
-	public ArrayList<ArrayList<Integer>> getGenotipos() {
+	public int[][] getGenotipos() {
 		return genotipos;
 	}
 
 
-	public ArrayList<Integer> getMelhorGenotipo() {
+	public int[] getMelhorGenotipo() {
 		return melhorGenotipo;
 	}
 	
-	
-//	public static void main(String[] args) {
-//		ArrayList<Point2D> cidades = new ArrayList<Point2D>();
-//		int i = new Random().nextInt(8);
-//		while(i < 10) {
-//			double x = StdRandom.uniform() * (100);
-//			double y = StdRandom.uniform() * (100);
-//			Coordenadas random = new Coordenadas(x,y);
-//			cidades.add(random);
-//			i++;
-//		}
-//		CalculadorDeCaminho n = new CalculadorDeCaminho(cidades,100,1);
-//	}
+	public void setMelhorGenotipo(int[] genotipo) {
+		melhorGenotipo = genotipo.clone();
+	}
 
 }

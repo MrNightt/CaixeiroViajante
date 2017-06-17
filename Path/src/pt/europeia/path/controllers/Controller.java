@@ -143,28 +143,29 @@ public class Controller {
 
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-			ArrayList<Integer> genAtual = calc.getGenotipos().get(currentGen);
+			int[] genAtual = calc.getGenotipos()[currentGen];
 
 			double dist = calc.distancia(genAtual);
 			if(dist < calc.getMelhorDistancia()) {
 				calc.setMelhorDistancia(dist);
 				melhorGen = currentGen;
+				calc.setMelhorGenotipo(genAtual);
 			}
 			
 			//Melhor caminho ate ao momento
 			gc.setStroke(Color.FORESTGREEN);
 			gc.setLineWidth(5);
 			for(int j = 0; j < cidades.size() - 1; j++) {
-				gc.strokeLine(cidades.get(calc.getGenotipos().get(melhorGen).get(j)).getX() + tamanhoCirc/2,cidades.get(calc.getGenotipos().get(melhorGen).get(j)).getY() + tamanhoCirc/2,
-						cidades.get(calc.getGenotipos().get(melhorGen).get(j+1)).getX() + tamanhoCirc/2,cidades.get(calc.getGenotipos().get(melhorGen).get(j+1)).getY() + tamanhoCirc/2);
+				gc.strokeLine(cidades.get(calc.getMelhorGenotipo()[j]).getX() + tamanhoCirc/2,cidades.get(calc.getMelhorGenotipo()[j]).getY() + tamanhoCirc/2,
+						cidades.get(calc.getMelhorGenotipo()[j+1]).getX() + tamanhoCirc/2,cidades.get(calc.getMelhorGenotipo()[j+1]).getY() + tamanhoCirc/2);
 			}
 
 			//Caminho atual
 			gc.setStroke(Color.BLACK);
 			gc.setLineWidth(1);
 			for(int j = 0; j < cidades.size() - 1; j++) {
-				gc.strokeLine(cidades.get(genAtual.get(j)).getX() + tamanhoCirc/2,cidades.get(genAtual.get(j)).getY() + tamanhoCirc/2,
-						cidades.get(genAtual.get(j+1)).getX() + tamanhoCirc/2,cidades.get(genAtual.get(j+1)).getY() + tamanhoCirc/2);
+				gc.strokeLine(cidades.get(genAtual[j]).getX() + tamanhoCirc/2,cidades.get(genAtual[j]).getY() + tamanhoCirc/2,
+						cidades.get(genAtual[j+1]).getX() + tamanhoCirc/2,cidades.get(genAtual[j+1]).getY() + tamanhoCirc/2);
 			}
 
 			currentGen++;
@@ -173,7 +174,7 @@ public class Controller {
 
 			update();
 			
-			if(currentGen == calc.getGenotipos().size()) {
+			if(currentGen == calc.getGenotipos().length) {
 				currentGen = 0;
 				calc.novaGeracao();
 			}
