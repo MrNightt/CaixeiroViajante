@@ -103,7 +103,7 @@ public class CalculadorDeCaminhoAG {
 			}
 		}
 	}
-	
+
 	public static void changeEnd(int entry, int end,int[] gen, int[] g1, ArrayList<Integer> temp) {
 		for(int i = entry; i < end; i++) {
 			for(int j = end; j < gen.length; j++) {
@@ -134,27 +134,10 @@ public class CalculadorDeCaminhoAG {
 				newGen[i] = g2[i];
 			}
 
-			for(int i = entry; i < end; i++) {
-				for(int j = 0; j < entry; j++) {
-					if(newGen[i] == newGen[j]) {
-						newGen[j] = g1[i];
-						if(temp.contains(g1[i])) {
-							changeEntry(entry,end,newGen,g1,temp);
-						}
-					}
-				}
-			}
-			
-			for(int i = entry; i < end; i++) {
-				for(int j = end; j < newGen.length; j++) {
-					if(newGen[i] == newGen[j]) {
-						newGen[j] = g1[i];
-						if(temp.contains(g1[i])) {
-							changeEnd(entry,end,newGen,g1,temp);
-						}
-					}
-				}
-			}
+			changeEntry(entry,end,newGen,g1,temp);
+
+			changeEnd(entry,end,newGen,g1,temp);
+
 			break;
 
 		case OX:
