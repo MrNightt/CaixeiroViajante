@@ -15,7 +15,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(Main.class.getResource("../views/Map.fxml"));
+		loader.setLocation(Main.class.getResource("/Map.fxml"));
 		try {
 			
 			map = new Scene(loader.load());

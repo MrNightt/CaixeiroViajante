@@ -1,22 +1,25 @@
 package pt.europeia.path.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.princeton.cs.algs4.StdRandom;
 import javafx.geometry.Point2D;
 
 
 public class CalculadorDeCaminhoAG {
-	
+
 	//O genotipo e um array de ints
 	private int[][] genotipos;
 
 	private int[] melhorGenotipo;
-	
+
 	private double[] aptidoes;
-	
-	private int geracao = 1;
-	
+
+	private int geracaoAtual = 1;
+
+	private final int geracoes;
+
 	private double melhorDistancia;
 
 	private int populacao;
@@ -25,25 +28,30 @@ public class CalculadorDeCaminhoAG {
 
 	private ArrayList<Point2D> cidades = new ArrayList<Point2D>();
 
-	
 
-	public CalculadorDeCaminhoAG(ArrayList<Point2D> cidades, int populacao, double taxaMutacao) {
+
+	public CalculadorDeCaminhoAG(ArrayList<Point2D> cidades, int populacao, double taxaMutacao, int geracoes) {
 		this.cidades = cidades;
 		this.populacao = populacao;
 		this.taxaMutacao = taxaMutacao;
-		
+		this.geracoes = geracoes;
+
 		genotipos = new int[populacao][cidades.size()];
 		aptidoes = new double[populacao];
 		melhorGenotipo = new int[cidades.size()];
-		
+
 		for(int i = 0; i < cidades.size(); i++) {
 			melhorGenotipo[i] = i;
 		}
-		
+
 		melhorDistancia = distancia(melhorGenotipo);
-		
+
 		gerarPopulacao();
-		
+
+	}
+
+	public enum crossOver {
+		PMX, OX;
 	}
 
 
@@ -54,7 +62,7 @@ public class CalculadorDeCaminhoAG {
 	public ArrayList<Integer> aptidoes() {
 		return null;
 	}
-	
+
 
 	/**
 	 * Calcula a distancia necessaria para percorrer uma ordem especifica de cidades
@@ -72,8 +80,8 @@ public class CalculadorDeCaminhoAG {
 		return somatorio;
 
 	}
-	
-	
+
+
 	public void mutar(int[] genotipo) {
 		double random = StdRandom.uniform();
 		if(random <= taxaMutacao) {
@@ -82,35 +90,128 @@ public class CalculadorDeCaminhoAG {
 			swap(genotipo, i, j);
 		}
 	}
-	
-	
-	public void novaGeracao() {
-		
-		//Selecionar os 50% melhores da populacao
-//		InsertionModified.sort(aptidao, genotipos);
-		
-		for(int[] each : genotipos) {
-			mutar(each);
+
+	public static void changeEntry(int entry, int end,int[] gen, int[] g1, ArrayList<Integer> temp) {
+		for(int i = entry; i < end; i++) {
+			for(int j = 0; j < entry; j++) {
+				if(gen[i] == gen[j]) {
+					gen[j] = g1[i];
+					if(temp.contains(g1[i])) {
+						changeEntry(entry,end,gen,g1,temp);
+					}
+				}
+			}
 		}
-		geracao++;
 	}
 	
-		
-	public int getGeracao() {
-		return geracao;
+	public static void changeEnd(int entry, int end,int[] gen, int[] g1, ArrayList<Integer> temp) {
+		for(int i = entry; i < end; i++) {
+			for(int j = end; j < gen.length; j++) {
+				if(gen[i] == gen[j]) {
+					gen[j] = g1[i];
+					if(temp.contains(g1[i])) {
+						changeEnd(entry,end,gen,g1,temp);
+					}
+				}
+			}
+		}
+	}
+
+	public int[] crossOver(int[] g1, int[] g2, crossOver type) {
+
+		int[] newGen = g1.clone();
+
+		switch(type) {
+		case PMX:
+
+			int entry = StdRandom.uniform(g1.length);
+			int end = StdRandom.uniform(entry, g1.length);
+
+			ArrayList<Integer> temp = new ArrayList<Integer>();
+
+			for(int i = entry; i < end; i++) {
+				temp.add(g2[i]);
+				newGen[i] = g2[i];
+			}
+
+			for(int i = entry; i < end; i++) {
+				for(int j = 0; j < entry; j++) {
+					if(newGen[i] == newGen[j]) {
+						newGen[j] = g1[i];
+						if(temp.contains(g1[i])) {
+							changeEntry(entry,end,newGen,g1,temp);
+						}
+					}
+				}
+			}
+			
+			for(int i = entry; i < end; i++) {
+				for(int j = end; j < newGen.length; j++) {
+					if(newGen[i] == newGen[j]) {
+						newGen[j] = g1[i];
+						if(temp.contains(g1[i])) {
+							changeEnd(entry,end,newGen,g1,temp);
+						}
+					}
+				}
+			}
+			break;
+
+		case OX:
+
+
+
+			break;
+		}
+
+
+		return newGen;
+	}
+
+
+	public void novaGeracao() {
+
+		if(geracaoAtual <= geracoes) {//Ordenar os genotipos dos melhores aos piores
+			InsertionModified.sort(aptidoes, genotipos);
+			int melhorMetade = genotipos.length/2;
+
+			for(int i = melhorMetade; i < genotipos.length; i++) {
+
+				//Escolher dois genotipos ranodm dos 50% dos melhores
+				int[] g1 = genotipos[StdRandom.uniform(melhorMetade)];
+				int[] g2 = genotipos[StdRandom.uniform(melhorMetade)];
+				genotipos[i] = crossOver(g1, g2, crossOver.PMX);
+			}
+
+			for(int i = 0; i < populacao; i++) {
+				mutar(genotipos[i]);
+				aptidoes[i] = distancia(genotipos[i]);
+			}
+			geracaoAtual++;
+		}
+	}
+
+
+	public int getGeracoes() {
+		return geracoes;
+	}
+
+	public int getGeracaoAtual() {
+		return geracaoAtual;
 	}
 
 
 	private void gerarPopulacao() {
-		
+
 		genotipos[0] = melhorGenotipo;
+		aptidoes[0] = distancia(melhorGenotipo);
 		for(int i = 1; i < populacao; i++) {
 			int[] temp = melhorGenotipo.clone();
 			shuffle(temp);
-			aptidoes[i] = (1 / distancia(temp) + 1);
+			aptidoes[i] = distancia(temp);
 			genotipos[i] = temp;
 		}
-		
+
 	}
 
 
@@ -121,7 +222,7 @@ public class CalculadorDeCaminhoAG {
 			swap(values, i, r);
 		}
 	}
-	
+
 
 	private static void swap(final int[] values, final int firstPosition,
 			final int secondPosition) {
@@ -178,7 +279,7 @@ public class CalculadorDeCaminhoAG {
 	public int[] getMelhorGenotipo() {
 		return melhorGenotipo;
 	}
-	
+
 	public void setMelhorGenotipo(int[] genotipo) {
 		melhorGenotipo = genotipo.clone();
 	}
