@@ -18,6 +18,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 import pt.europeia.path.models.CalculadorDeCaminhoAG;
 
@@ -43,10 +45,10 @@ public class Controller {
 
 	@FXML
 	TextField numCidades;
-	
+
 	@FXML
 	TextField geracoes;
-	
+
 	@FXML
 	Label mutv;
 
@@ -57,7 +59,7 @@ public class Controller {
 	public void initialize() {
 
 		tamanhoCirc = 15;
-		
+
 		mutacao.setMax(1.0);
 		mutacao.setMin(0.0);
 		mutacao.setValue(.5);
@@ -65,6 +67,8 @@ public class Controller {
 		mutacao.setMajorTickUnit(.25);
 
 		gc = canvas.getGraphicsContext2D();
+		gc.setStroke(Color.gray(.5, .7));
+		gc.strokeText("@Author: Márcio Costa",0, canvas.getHeight()/2);
 
 		numCidades.textProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -83,7 +87,7 @@ public class Controller {
 				}
 			}
 		});
-		
+
 		geracoes.textProperty().addListener(new ChangeListener<String>() {
 			@Override
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
@@ -187,11 +191,12 @@ public class Controller {
 			}
 
 			DecimalFormat df = new DecimalFormat("0.00");
-			
+
 			currentGen++;
 			gc.strokeText("Melhor distancia "+ df.format(calc.getMelhorDistancia()), 5, 20);
 			gc.strokeText("População " + calc.getPopulacao() + "\t\tTaxa de Mutação " + df.format(calc.getTaxaMutacao()) + 
 					"\t\t" + calc.getGeracaoAtual() + " de " + calc.getGeracoes() + " Gerações", 20, canvas.getHeight() - 5);
+
 
 			update();
 
@@ -227,6 +232,9 @@ public class Controller {
 	 */
 	public void update() {
 
+		gc.setStroke(Color.gray(.5, .7));
+		gc.strokeText("@Author: Márcio Costa",0, canvas.getHeight()/2);
+		
 		gc.setFill(Color.BLACK);
 		for(int i = 0; i < cidades.size(); i++) {
 			gc.fillOval(cidades.get(i).getX(), cidades.get(i).getY(), tamanhoCirc, tamanhoCirc);
