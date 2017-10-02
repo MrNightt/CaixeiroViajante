@@ -56,15 +56,6 @@ public class CalculadorDeCaminhoAG {
 
 
 	/**
-	 * Calcula o caminho mais curto a percorrer se passarmos por todas a cidades
-	 * @return
-	 */
-	public ArrayList<Integer> aptidoes() {
-		return null;
-	}
-
-
-	/**
 	 * Calcula a distancia necessaria para percorrer uma ordem especifica de cidades
 	 * @param genotipo A ordem a percorrer
 	 * @return
@@ -85,8 +76,8 @@ public class CalculadorDeCaminhoAG {
 	public void mutar(int[] genotipo) {
 		double random = StdRandom.uniform();
 		if(random <= taxaMutacao) {
-			int i = (int) StdRandom.uniform(0,genotipo.length);
-			int j = (int) StdRandom.uniform(0,genotipo.length);
+			int i = (int) StdRandom.uniform(1,genotipo.length-1);
+			int j = (int) StdRandom.uniform(1,genotipo.length-1);
 			swap(genotipo, i, j);
 		}
 	}
@@ -124,8 +115,8 @@ public class CalculadorDeCaminhoAG {
 		switch(type) {
 		case PMX:
 
-			int entry = StdRandom.uniform(g1.length);
-			int end = StdRandom.uniform(entry, g1.length);
+			int entry = StdRandom.uniform(1,g1.length-1);
+			int end = StdRandom.uniform(entry, g1.length-1);
 
 			ArrayList<Integer> temp = new ArrayList<Integer>();
 
@@ -198,10 +189,10 @@ public class CalculadorDeCaminhoAG {
 	}
 
 
-	//Knuth Shuffling Algorithm - Entry Point
+	//Knuth Shuffling Algorithm - Entry Point ALTERADO
 	public static void shuffle(final int[] values) {
-		for (int i = 0; i != values.length; i++) {
-			final int r = StdRandom.uniform(i + 1);
+		for (int i = 1; i != values.length-2; i++) {
+			final int r = StdRandom.uniform(1,i + 1);
 			swap(values, i, r);
 		}
 	}

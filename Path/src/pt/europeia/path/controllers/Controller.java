@@ -68,7 +68,7 @@ public class Controller {
 
 		gc = canvas.getGraphicsContext2D();
 		gc.setStroke(Color.gray(.5, .7));
-		gc.strokeText("@Author: Márcio Costa",0, canvas.getHeight()/2);
+		gc.strokeText("@Author: Mr.Night",300, 20);
 
 		numCidades.textProperty().addListener(new ChangeListener<String>() {
 			@Override
@@ -126,7 +126,7 @@ public class Controller {
 				cidades.add(random);
 				i++;
 			}
-
+		//Criar cidades em posicoes aleatorias caso for especificado o numero de cidades
 		} else {
 
 			for(int i = 0; i < Integer.parseInt(numCidades.getText()); i++) {
@@ -151,6 +151,8 @@ public class Controller {
 
 	@FXML
 	public void run() {
+		
+		cidades.add(cidades.get(0));
 
 		int pop = populacao.getText().isEmpty() ? 100 : Integer.parseInt(populacao.getText());
 		int ger = geracoes.getText().isEmpty() ? 5 : Integer.parseInt(geracoes.getText());
@@ -175,7 +177,7 @@ public class Controller {
 			}
 
 			//Melhor caminho ate ao momento
-			gc.setStroke(Color.FORESTGREEN);
+			gc.setStroke(Color.rgb(100, 200, 50));
 			gc.setLineWidth(5);
 			for(int j = 0; j < cidades.size() - 1; j++) {
 				gc.strokeLine(cidades.get(calc.getMelhorGenotipo()[j]).getX() + tamanhoCirc/2,cidades.get(calc.getMelhorGenotipo()[j]).getY() + tamanhoCirc/2,
@@ -232,13 +234,19 @@ public class Controller {
 	 */
 	public void update() {
 
+		//Watermark
 		gc.setStroke(Color.gray(.5, .7));
-		gc.strokeText("@Author: Márcio Costa",0, canvas.getHeight()/2);
+		gc.strokeText("@Author: Mr.Night",300, 20);
 		
+		//Cidades
 		gc.setFill(Color.BLACK);
-		for(int i = 0; i < cidades.size(); i++) {
+		for(int i = 1; i < cidades.size(); i++) {
 			gc.fillOval(cidades.get(i).getX(), cidades.get(i).getY(), tamanhoCirc, tamanhoCirc);
 		}
+		
+		//Cidade de partida
+		gc.setFill(Color.RED);
+		gc.fillOval(cidades.get(0).getX(), cidades.get(0).getY(), tamanhoCirc, tamanhoCirc);
 
 	}
 
