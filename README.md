@@ -12,6 +12,6 @@ população e é feito um <b>crossOver</b> entre eles, para ser mais especifico 
 crossover</b>, também conhecido como Partial-mapped Crossover.
 <br>
 <h1>(Traveling salesman problem)</h1>
-This program represents cities and tries to find the most efficient path with the requirement of going through all them.<br>
+This program represents cities and tries to find the most efficient path with the requirement of going through all them.</br>
 
 ![Alt text](https://raw.githubusercontent.com/MrNightt/CaixeiroViajante/master/Path/resources/giphy.gif)
